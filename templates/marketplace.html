@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success">Plant Marketplace</h2>
+        <p class="text-secondary">Buy seeds, saplings, and organic herbal products directly from growers.</p>
+    </div>
+
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 card-hover">
+                <div class="position-relative bg-light d-flex align-items-center justify-content-center overflow-hidden"
+                    style="height: 250px;">
+                    <img src="{% static product.image %}" alt="{{ product.name }}" class="w-100 h-100"
+                        style="object-fit: cover;">
+                    <span class="badge bg-success position-absolute top-0 start-0 m-3">Organic</span>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-2">{{ product.name }}</h5>
+                    <p class="card-text text-muted small mb-3">{{ product.desc }}</p>
+                    <div class="mt-2">
+                        <small class="text-muted fw-bold"><i class="fas fa-store me-1"></i> {{ product.shop }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

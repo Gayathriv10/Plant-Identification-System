@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 animate-fade-in" style="max-width: 900px;">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success display-5">Growth & Care Guide</h2>
+        <p class="lead text-muted">Unlock the secrets to thriving plants. What are you growing today?</p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="card shadow-lg border-0 rounded-pill mx-auto mb-5 position-relative overflow-hidden"
+        style="max-width: 700px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);">
+        <div class="card-body p-2">
+            <form method="post" class="d-flex w-100 position-relative">
+                {% csrf_token %}
+                <div class="position-absolute start-0 top-50 translate-middle-y ms-4 text-success opacity-50">
+                    <i class="fas fa-search fs-5"></i>
+                </div>
+                <input type="text" id="plantInput" name="plant_name"
+                    class="form-control form-control-lg border-0 bg-transparent ps-5"
+                    placeholder="Search plant name (e.g., Tulsi, Hibiscus)..." required
+                    value="{{ plant_name|default:'' }}" autocomplete="off" style="height: 60px; font-size: 1.1rem;">
+                <button type="submit"
+                    class="btn btn-success rounded-pill px-4 fw-bold shadow-sm m-1 transition-transform">
+                    Get Tips
+                </button>
+            </form>
+        </div>
+        <!-- Progress Bar (Fake) -->
+        <div class="progress position-absolute bottom-0 start-0 w-100" style="height: 3px; display: none;"
+            id="searchLoader">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated w-100"></div>
+        </div>
+    </div>
+
+    <!-- Quick Tags -->
+    {% if not tips %}
+    <div class="text-center mb-5 fade-in-up">
+        <p class="small text-uppercase text-muted fw-bold mb-3 letter-spacing-1">Popular Searches</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 bg-white quick-tag"
+                onclick="setPlant('Holy Basil')">🌿 Holy Basil</button>
+            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 bg-white quick-tag"
+                onclick="setPlant('Aloe Vera')">🌵 Aloe Vera</button>
+            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 bg-white quick-tag"
+                onclick="setPlant('Mint')">🍃 Mint</button>
+            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 bg-white quick-tag"
+                onclick="setPlant('Neem')">🌳 Neem</button>
+            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 py-2 bg-white quick-tag"
+                onclick="setPlant('Hibiscus')">🌺 Hibiscus</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Results Section -->
+    {% if tips %}
+    <div class="result-container animate-fade-in delay-100">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div
+                class="card-header bg-success text-white py-4 px-4 px-md-5 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white bg-opacity-25 text-white rounded-circle d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="fas fa-seedling fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 opacity-75 text-uppercase small ls-1 text-white">Care Guide For</h6>
+                        <h3 class="mb-0 fw-bold text-white">{{ plant_name|title }}</h3>
+                    </div>
+                </div>
+                <div class="d-none d-md-block">
+                    <i class="fas fa-book-open text-white opacity-25"
+                        style="font-size: 4rem; transform: rotate(-10deg);"></i>
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5 bg-white">
+                <div class="prose lead" style="font-size: 1.1rem; line-height: 1.8; color: #444;">
+                    {{ tips|safe }}
+                </div>
+
+                <hr class="my-5 opacity-10">
+
+                <div class="d-flex justify-content-center">
+                    <button onclick="window.print()"
+                        class="btn btn-outline-secondary rounded-pill px-4 btn-sm no-print">
+                        <i class="fas fa-print me-2"></i> Save Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+
+    .transition-transform:active {
+        transform: scale(0.95);
+    }
+
+    .quick-tag {
+        transition: all 0.2s;
+        border-color: #e0e0e0;
+        color: #666;
+    }
+
+    .quick-tag:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .prose h3 {
+        color: var(--primary-dark);
+        margin-top: 1.5rem;
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .prose ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .prose li {
+        padding-left: 1.5rem;
+        position: relative;
+        margin-bottom: 0.5rem;
+    }
+
+    .prose li::before {
+        content: "•";
+        color: var(--primary-color);
+        font-weight: bold;
+        font-size: 1.5em;
+        position: absolute;
+        left: 0;
+        top: -5px;
+    }
+
+    @media print {
+
+        .navbar,
+        .no-print,
+        form {
+            display: none !important;
+        }
+
+        .result-container {
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+<script>
+    function setPlant(name) {
+        const input = document.getElementById('plantInput');
+        input.value = name;
+        input.focus();
+    }
+
+    // Simple loader on submit
+    document.querySelector('form').addEventListener('submit', function () {
+        document.getElementById('searchLoader').style.display = 'flex';
+    });
+</script>
+{% endblock %}

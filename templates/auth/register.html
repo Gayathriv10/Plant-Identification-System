@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center py-5 animate-fade-in"
+    style="min-height: calc(100vh - 80px);">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden w-100" style="max-width: 900px;">
+        <div class="row g-0">
+            <!-- Sidebar with background image -->
+            <div
+                class="col-md-5 d-none d-md-flex align-items-center justify-content-center text-white text-center p-5 auth-bg-image">
+                <div style="z-index: 2;">
+                    <h2 class="fw-bold mb-3 display-6 text-white">Join The Community</h2>
+                    <p class="lead text-white" style="font-size: 1rem; opacity: 0.9;">Start your journey to better
+                        health with nature's healing power.</p>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="col-md-7 p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-success mb-2">Create Account</h2>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">{{ field.label }}</label>
+                        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}"
+                            class="form-control form-control-lg bg-light border-0" 
+                            {% if field.value %} value="{{ field.value }}" {% endif %} required>
+                        {% if field.help_text %}
+                        <div class="form-text small">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill mt-3 fw-bold shadow-sm">Sign
+                        Up</button>
+                </form>
+
+                <div class="text-center mt-4 text-muted">
+                    <p>Already have an account? <a href="{% url 'login' %}"
+                            class="text-success fw-bold text-decoration-none">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
